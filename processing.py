@@ -4,7 +4,7 @@ import string
 
 class Processing:
     """
-    http://www.cs.duke.edu/courses/spring14/compsci290/assignments/lab02.html 
+    http://www.cs.duke.edu/courses/spring14/compsci290/assignments/lab02.html
     """
     def stem_tokens(tokens, stemmer=PorterStemmer()):
         stemmed = []
@@ -23,3 +23,6 @@ class Processing:
         no_punctuation = text.translate(None, string.punctuation)
         tokens = nltk.word_tokenize(no_punctuation)
         return tokens
+
+    def lemmatize_tokens(tokens, lemmatizer=nltk.WordNetLemmatizer()):
+        return lemmatizer.lemmatize(tokens)

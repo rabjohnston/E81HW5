@@ -2,6 +2,7 @@ from xml.etree.ElementTree import ElementTree
 from os import listdir
 import pandas as pd
 
+
 class DataSet:
     """
     Holds all the plays in a dataframe by Play/Act/Scene/Speaker.
@@ -14,6 +15,21 @@ class DataSet:
     def __init__(self):
         self.raw_files = {}
         self.df = pd.DataFrame(columns=['Play', 'Act', 'Scene', 'Speaker', 'Utterance'])
+        self.chars = pd.DataFrame()
+        # self._names = {'hamlet':'Hamlet', 'othello':'Othello', 'hen_v':'Henry V',
+        #                'timon':'Timon of Athens', 'm_for_m':'Measure for Measure',
+        #                'a_and_c':'Antony and Cleopatra', 'lear':'King Lear', '??????':'King Edward III', 'j_caesar':'Julius Caesar',
+        #                'macbeth':'Macbeth', 'titus':'Titus Andronicus', 'win_tale':"The Winter's Tale", 'rich_iii.xml':'Richard III',
+        #                'as_you':'As You Like It', 'coriolan':'Coriolanus', 'tempest':'The Tempest', 'hen_iv_2':'Henry IV Part 2',
+        #                'r_and_j':'Romeo and Juliet', 'pericles':'Pericles', 'hen_iv_1':'Henry IV Part 1', 'cymbelin':'Cymbeline',
+        #                '??????':'The Two Noble Kinsmen', 'lll':"Love's Labour's Lost", 'taming':'The Taming of the Shrew',
+        #                'merchant':'The Merchant of Venice', 'troilus':'Troilus and Cressida', 'john':'King John',
+        #                "All's Well That Ends Well":'all_well', 'rich_ii':'Richard II', 'hen_viii':'Henry VIII',
+        #                'two_gent':'The Two Gentlemen of Verona', 'm_wives':'The Merry Wives of Windsor',
+        #                'hen_vi_3':'Henry VI Part 3', 'much_ado':'Much Ado About Nothing', 'hen_vi_1':'Henry VI Part 1',
+        #                'hen_vi_2':'Henry VI Part 2', 't_night':'Twelfth Night', 'com_err':'The Comedy of Errors',
+        #                'dream':"A Midsummer Night's Dream"}
+
 
     def parse(self, play, xml):
         """
@@ -43,14 +59,15 @@ class DataSet:
                         else:
                             lines = lines + line.text + ' '
 
-                    self.df = self.df.append({'Play': play, 'Act': act, 'Scene': scene, 'Speaker':speaker, 'Utterance' : lines},
+                    # Store this utterance. NB, the utterance is converted to lowercase to make it easier to parse later
+                    self.df = self.df.append({'Play': play, 'Act': i, 'Scene': j, 'Speaker':speaker, 'Utterance' : lines.lower()},
                                              ignore_index=True)
-                    #print('{},{},{},{}: {}'.format(play, act.text, scene.text, speaker, lines))
+                    #print('{},{},{},{}: {}'.format(play, i, j, speaker, lines))
 
 
     def readXMLFromFile(self, file):
         print(file)
-        xml = ElementTree().parse('../texts/{}'.format(file))
+        xml = ElementTree().parse('./texts/{}'.format(file))
         play = file[:-4]
 
         return play, xml
@@ -63,12 +80,18 @@ class DataSet:
         :return: Nothing
         """
 
-        for file in listdir("../texts"):
+
+        for file in listdir("./texts"):
             if file.endswith(".xml"):
                 play, xml = self.readXMLFromFile(file)
                 self.raw_files[play] = xml
                 self.parse(play, xml)
 
+
+    def loadCharacters(self):
+        self.chars = pd.read_csv('Shakespeare_characters.txt',sep='\t',encoding = 'ISO-8859-1')
+
+        print('Play ', self.chars.Play.unique())
 
     def save(self):
         """
@@ -79,7 +102,9 @@ class DataSet:
 
     def load(self):
         """
-        Load data from pickle
+        Load play data from pickle anc characters data from CSV
         :return:
         """
         self.df = pd.read_pickle('data.pickle')
+
+        self.loadCharacters()
