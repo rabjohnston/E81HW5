@@ -16,6 +16,9 @@ class DataSet:
         self.raw_files = {}
         self.df = pd.DataFrame(columns=['Play', 'Act', 'Scene', 'Speaker', 'Utterance'])
         self.chars = pd.DataFrame()
+
+        self._plays_utterances = {}
+
         # self._names = {'hamlet':'Hamlet', 'othello':'Othello', 'hen_v':'Henry V',
         #                'timon':'Timon of Athens', 'm_for_m':'Measure for Measure',
         #                'a_and_c':'Antony and Cleopatra', 'lear':'King Lear', '??????':'King Edward III', 'j_caesar':'Julius Caesar',
@@ -29,6 +32,22 @@ class DataSet:
         #                'hen_vi_3':'Henry VI Part 3', 'much_ado':'Much Ado About Nothing', 'hen_vi_1':'Henry VI Part 1',
         #                'hen_vi_2':'Henry VI Part 2', 't_night':'Twelfth Night', 'com_err':'The Comedy of Errors',
         #                'dream':"A Midsummer Night's Dream"}
+
+    def get_by_play(self):
+
+        awv = {}
+
+        for play in self.df.Play.unique():
+            dfp = self.df[self.df['Play'] == play]
+
+            # Generate one big string for the full play
+            alltext = ''
+            for text in dfp['Utterance']:
+                alltext += text + ' '
+
+            awv[play] = alltext
+
+        return awv
 
 
     def parse(self, play, xml):
