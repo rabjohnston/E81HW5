@@ -33,21 +33,29 @@ class DataSet:
         #                'hen_vi_2':'Henry VI Part 2', 't_night':'Twelfth Night', 'com_err':'The Comedy of Errors',
         #                'dream':"A Midsummer Night's Dream"}
 
-    def get_by_play(self):
+    def get_by(self, group_name):
 
         awv = {}
 
-        for play in self.df.Play.unique():
-            dfp = self.df[self.df['Play'] == play]
+        for item in self.df[group_name].unique():
+            dfp = self.df[self.df[group_name] == item]
 
-            # Generate one big string for the full play
+            # Generate one big string for the full group
             alltext = ''
             for text in dfp['Utterance']:
                 alltext += text + ' '
 
-            awv[play] = alltext
+            awv[item] = alltext
 
         return awv
+
+
+    def get_by_play(self):
+        return self.get_by('Play')
+
+
+    def get_by_speaker(self):
+        return self.get_by('Speaker')
 
 
     def parse(self, play, xml):
@@ -79,7 +87,7 @@ class DataSet:
                             lines = lines + line.text + ' '
 
                     # Store this utterance. NB, the utterance is converted to lowercase to make it easier to parse later
-                    self.df = self.df.append({'Play': play, 'Act': i, 'Scene': j, 'Speaker':speaker, 'Utterance' : lines.lower()},
+                    self.df = self.df.append({'Play': play, 'Act': i, 'Scene': j, 'Speaker':speaker, 'Utterance' : lines},
                                              ignore_index=True)
                     #print('{},{},{},{}: {}'.format(play, i, j, speaker, lines))
 
