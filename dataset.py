@@ -93,7 +93,7 @@ class DataSet:
 
 
     def readXMLFromFile(self, file):
-        print(file)
+        # print(file)
         xml = ElementTree().parse('./texts/{}'.format(file))
         play = file[:-4]
 
