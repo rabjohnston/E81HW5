@@ -19,22 +19,14 @@ class DataSet:
 
         self._plays_utterances = {}
 
-        # self._names = {'hamlet':'Hamlet', 'othello':'Othello', 'hen_v':'Henry V',
-        #                'timon':'Timon of Athens', 'm_for_m':'Measure for Measure',
-        #                'a_and_c':'Antony and Cleopatra', 'lear':'King Lear', '??????':'King Edward III', 'j_caesar':'Julius Caesar',
-        #                'macbeth':'Macbeth', 'titus':'Titus Andronicus', 'win_tale':"The Winter's Tale", 'rich_iii.xml':'Richard III',
-        #                'as_you':'As You Like It', 'coriolan':'Coriolanus', 'tempest':'The Tempest', 'hen_iv_2':'Henry IV Part 2',
-        #                'r_and_j':'Romeo and Juliet', 'pericles':'Pericles', 'hen_iv_1':'Henry IV Part 1', 'cymbelin':'Cymbeline',
-        #                '??????':'The Two Noble Kinsmen', 'lll':"Love's Labour's Lost", 'taming':'The Taming of the Shrew',
-        #                'merchant':'The Merchant of Venice', 'troilus':'Troilus and Cressida', 'john':'King John',
-        #                "All's Well That Ends Well":'all_well', 'rich_ii':'Richard II', 'hen_viii':'Henry VIII',
-        #                'two_gent':'The Two Gentlemen of Verona', 'm_wives':'The Merry Wives of Windsor',
-        #                'hen_vi_3':'Henry VI Part 3', 'much_ado':'Much Ado About Nothing', 'hen_vi_1':'Henry VI Part 1',
-        #                'hen_vi_2':'Henry VI Part 2', 't_night':'Twelfth Night', 'com_err':'The Comedy of Errors',
-        #                'dream':"A Midsummer Night's Dream"}
 
     def get_by(self, group_name, df):
-
+        """
+        Generic method for us to split the data by a specific grouping
+        :param group_name: the name of the group to split by
+        :param df: the whole of the data in a pandas dataframe
+        :return: a dict with keys = group names and values are the utterances.
+        """
         awv = {}
 
         for item in df[group_name].unique():
@@ -51,14 +43,26 @@ class DataSet:
 
 
     def get_by_play(self):
+        """
+        Get the uttereances for each play
+        :return: a dict, keyed on play
+        """
         return self.get_by('Play', self.df)
 
 
     def get_by_speaker(self):
+        """
+        Get the utterances for each speaker
+        :return: a dict, keyed on speaker
+        """
         return self.get_by('Speaker', self.df)
 
 
     def get_by_play_by_speaker(self):
+        """
+        Get all the utterences for a speaker, grouped by play
+        :return: a dict of plays, with every entry a dict of speakers.
+        """
         all_plays = {}
         for item in self.df['Play'].unique():
             dfp = self.df[self.df['Play'] == item]
@@ -96,10 +100,10 @@ class DataSet:
                         else:
                             lines = lines + line.text + ' '
 
-                    # Store this utterance. NB, the utterance is converted to lowercase to make it easier to parse later
+                    # Store this utterance.
                     self.df = self.df.append({'Play': play, 'Act': i, 'Scene': j, 'Speaker':speaker, 'Utterance' : lines},
                                              ignore_index=True)
-                    #print('{},{},{},{}: {}'.format(play, i, j, speaker, lines))
+
 
 
     def readXMLFromFile(self, file):
@@ -143,5 +147,3 @@ class DataSet:
         :return:
         """
         self.df = pd.read_pickle('data.pickle')
-
-        #self.loadCharacters()
