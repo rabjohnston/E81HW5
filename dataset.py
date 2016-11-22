@@ -58,6 +58,7 @@ class DataSet:
         return self.get_by('Speaker')
 
 
+
     def parse(self, play, xml):
         """
         Parse an individual XML file.
@@ -134,4 +135,4 @@ class DataSet:
         """
         self.df = pd.read_pickle('data.pickle')
 
-        self.loadCharacters()
+        #self.loadCharacters()
