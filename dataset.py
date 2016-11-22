@@ -33,12 +33,12 @@ class DataSet:
         #                'hen_vi_2':'Henry VI Part 2', 't_night':'Twelfth Night', 'com_err':'The Comedy of Errors',
         #                'dream':"A Midsummer Night's Dream"}
 
-    def get_by(self, group_name):
+    def get_by(self, group_name, df):
 
         awv = {}
 
-        for item in self.df[group_name].unique():
-            dfp = self.df[self.df[group_name] == item]
+        for item in df[group_name].unique():
+            dfp = df[df[group_name] == item]
 
             # Generate one big string for the full group
             alltext = ''
@@ -51,12 +51,21 @@ class DataSet:
 
 
     def get_by_play(self):
-        return self.get_by('Play')
+        return self.get_by('Play', self.df)
 
 
     def get_by_speaker(self):
-        return self.get_by('Speaker')
+        return self.get_by('Speaker', self.df)
 
+
+    def get_by_play_by_speaker(self):
+        all_plays = {}
+        for item in self.df['Play'].unique():
+            dfp = self.df[self.df['Play'] == item]
+            this_play = self.get_by('Speaker', dfp)
+            all_plays[item] = this_play
+
+        return all_plays
 
 
     def parse(self, play, xml):
